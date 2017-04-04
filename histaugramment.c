@@ -185,11 +185,27 @@ void AfficherResultatHTML(KEY *res, int len , char* pathURLS,char *req, char* fi
 } 
  
  
+void chargement(char *url) 
+{
+  printf("ETAPE 1 :\n"); 
+  //float monHisto[64]; 
+  //int i =0; 
+  //calculHistogramme("./images/2008_000001.jpg", monHisto); 
+  printf("\n\n"); 
+   
+  //Etape 2 
+  printf("ETAPE 2 :\n"); 
+  calculHistogrammeDeCouleur(url); 
+  printf("\n\n"); 
+
+}
+ 
+
 void CalculHistogramesPertinences(char *req, char* path, char* final) 
 { 
-  int len; 
+    int len; 
     char **liste = readList(path, &len); 
-  freeList(liste,len); 
+    freeList(liste,len); 
    
     printf("ETAPE 3 :\n"); 
     KEY distance[len]; 
@@ -202,40 +218,33 @@ void CalculHistogramesPertinences(char *req, char* path, char* final)
      
     printf("ETAPE AFFICHAGE :\n"); 
     AfficherResultatHTML(distance,len,path,req,final); 
+    printf("\n\n"); 
 } 
 
-
+void filtrageSift(char *fichier) 
+{ 
+    //Ouvrir fichier
+    FILE* efe = fopen(fichier,"w+");
+    
+    
+    //skip les trois premièr ligne
+    
+    //lire carc par carc
+}
 
 int main(int argc, char *argv[])
 {
   //Etape 1 
-  printf("ETAPE 1 :\n"); 
-  //float monHisto[64]; 
-  //int i =0; 
-  //calculHistogramme("./images/2008_000001.jpg", monHisto); 
-  //for(i=0;i<64;i++){ 
-    //printf("%f - ",monHisto[i]); 
-  //} 
-  //printf("\n"); 
+  printf("PREMIERE PARTIE :\n\n");
+  //chargement("/home/fernandes/Documents/S8/ARI/Partie2/ARI_Image/ARI/urls2.txt");
+  //CalculHistogramesPertinences("./images/2008_000001.jpg","/home/fernandes/Documents/S8/ARI/Partie2/ARI_Image/ARI/urls2.txt","./histogrammes/ResultatPart1.html"); 
   printf("\n\n"); 
-   
-  //Etape 2 
-  printf("ETAPE 2 :\n"); 
-  calculHistogrammeDeCouleur("/home/fernandes/Documents/S8/ARI/Partie2/ARI_Image/ARI/urls2.txt"); 
+  
+  printf("DEUXIEME PARTIE :\n\n"); 
+  
   printf("\n\n"); 
-   
-  //histogrammeDistance("./images/2008_000001.jpg","/home/fernandes/Documents/S8/ARI/Partie2/ARI_partiePhoto/urls2.txt"); 
-  CalculHistogramesPertinences("./images/2008_000001.jpg","/home/fernandes/Documents/S8/ARI/Partie2/ARI_Image/ARI/urls2.txt","./histogrammes/ResultatPart1.html"); 
-   
-  //histogrammeDistance("./images/2008_000001.jpg"); 
-   
-   
-  /*float somme = 0.0; 
-  for(i=0;i<64;i++) 
-  { 
-   somme+=monHisto[i]; 
-  } 
-  printf("%f\n",somme);*/ 
-  exit(0); 
-  exit(0);
+  
+  printf("TROISIEME PARTIE :\n\n");
+  printf("\n\n"); 
+ exit(0);
 }
