@@ -223,13 +223,7 @@ void CalculHistogramesPertinences(char *req, char* path, char* final)
 
 void filtrageSift(char *fichier) 
 { 
-    //Ouvrir fichier
-    FILE* efe = fopen(fichier,"w+");
-    
-    
-    //skip les trois premièr ligne
-    
-    //lire carc par carc
+    //execlp
 }
 
 int main(int argc, char *argv[])

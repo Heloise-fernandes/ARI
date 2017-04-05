@@ -8,6 +8,7 @@ i=0
 
 while read file
 do
+	i=0
 	while read line
 	do
 	
