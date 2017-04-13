@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#ls ../sift/*.sift > ../liste_test_sift
+#ls ../sift/*.sift > ./histogrammes/liste_test_sift
 
 i=0
 
 
 
->samples.txt
+>./histogrammes/samples.txt
 
 while read file
 do
@@ -18,12 +18,12 @@ do
 	
 	if [ "$get" -eq 0 ] && [ "$i" -ge 3 ]
 	then
-		echo $line|sed 's/<.*>; /''/g'| tr -d ";" >> samples.txt
+		echo $line|sed 's/<.*>; /''/g'| tr -d ";" >> ./histogrammes/samples.txt
 	fi
 	i=$((i+1))
 	done < $file
 	
 
-done < ../liste_test_sift
+done < ./histogrammes/liste_test_sift
 
 

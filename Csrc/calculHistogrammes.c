@@ -6,94 +6,26 @@
 #include <math.h>
 
 #include "rdjpeg.h"
-#include "proc.c"
+#include "proc.h"
+#include "chargementHisto.h"
+#include "affichage.h"
 
-char* FICHIER_HISTO_COULEUR = "../histogrammes/indexes";
-char* FICHIER_LISTE_IMAGE_URL = "../Liste/urls2.txt";
-
-void calculHistogramme(char* nom, float* histo){
-  int i,j;
-  CIMAGE cim;
-  
-  //Lecture image à traiter
-  printf("Image %s \n", nom);
-  read_cimage(nom,&cim);
-  
-  //On initialise l'histogramme à 0
-  for(i=0; i <64; i++){histo[i]=0.0;}
-  
-  //On fait passer le nombre de valeur possible de 256 à 4
-  for (j = 0; j < cim.ny; j++) {       
-    for (i = 0; i < cim.nx; i++) {   
-      cim.r[i][j]=cim.r[i][j]*4/256;
-      cim.g[i][j]=cim.g[i][j]*4/256;
-      cim.b[i][j]=cim.b[i][j]*4/256;
-    }
-  }
-  
-  //On incrémente les couleurs dans notre tableau
-  int k = 0;
-  for (j = 0; j < cim.ny; j++) {       
-    for (i = 0; i < cim.nx; i++) {  	 
-	  k = cim.r[i][j]+cim.g[i][j]*4+cim.b[i][j]*16;
-      histo[k]++;
-    }
-  }
-  
-  //On normalise les valeurs
-  float t = cim.ny*cim.nx;
-  for(i=0;i<64;i++){
-	  float f = histo[i]/t;
-	  histo[i] = f;
-	  //printf("%f - ",histo[i]);
-	  
-  }
-  //printf("\n");
-  free_cimage(nom,&cim);
-  
-  return;
-}
-
-void TriPertinence(KEY *res, int len) 
-{ 
-  qsort(res,len,sizeof(KEY),keyCompare); 
-} 
-
-/*--------------------------------------------------------------------*/
-/*----------------------CALCUL FICHIER HISTOGRAMMES-------------------*/
-/*--------------------------------------------------------------------*/
-void creationFichierHistogrammeCouleur()
-{
-  float monHisto[64];
-  int len;
-  int indexFichier;
-  
-  //Liste de l'ensemble des fichiers
-  char **liste = readList(FICHIER_LISTE_IMAGE_URL, &len);
-  
-  //Fichier qui contient contiendra l'index
-  FILE* efe = fopen(FICHIER_HISTO_COULEUR,"wb+");
-  
-  //Pour chaque fichier on : 
-  for(indexFichier = 0; indexFichier<len; indexFichier++)
-  {
-	//calcul son histogramme
-	calculHistogramme(liste[indexFichier], monHisto);  
-	//Ecrit le tableau dans un fichier
-	fwrite(monHisto,sizeof(float),64,efe);
-  }
-  
-  //on ferme le fichier
-  fclose(efe);
-  freeList(liste,len); 
-}
+#ifndef CONST_H
+#define CONST_H
+#include "const.h"
+#endif
 
 /*--------------------------------------------------------------------*/
 /*-----------------------CALCUL FICHIER DISTANCES---------------------*/
 /*--------------------------------------------------------------------*/
 //len correspond au nombre de fichier
 //res un tableau de clé, ce tableau sera trié par odre croissant
-void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int size, int len) 
+void TriPertinence(KEY *res, int len) 
+{ 
+  qsort(res,len,sizeof(KEY),keyCompare); 
+} 
+
+void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int size, int len, int type) 
 {
 	//initialisation
 	int i = 0;
@@ -108,7 +40,8 @@ void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int 
 	
 	//charger histogramme requete : 
 	printf("Le fichier reque est %s \n",requete);
-	calculHistogramme(requete, histoReq);
+	if(type == 2){unhistoDeClasse(requete,256, histoReq);}
+	else{calculHistogramme(requete, histoReq);}
 	
 	
 	//Calcule distance pour tout les fichiers
@@ -143,4 +76,41 @@ void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int 
 	{
 		printf("%d / %f\n",res[i].k,res[i].d);
 	}
+}
+
+/*--------------------------------------------------------------------*/
+/*--------------CALCUL FICHIER HISTOGRAMMES PERTINENCE----------------*/
+/*--------------------------------------------------------------------*/
+void calculPertinenceCouleur(char * req)
+{
+	int len; 
+    char **liste = readList(FICHIER_LISTE_IMAGE_URL, &len); 
+    freeList(liste,len); 
+   
+    printf("TRI :\n"); 
+    KEY distance[len]; 
+    histogrammeDistance(req, FICHIER_HISTO_COULEUR, distance, 64, len,1); 
+    printf("\n\n"); 
+     
+    printf("ETAPE AFFICHAGE :%s, %d , %s\n",req,len,FICHIER_LISTE_IMAGE_URL); 
+    AfficherResultatHTMLCOULEUR(distance,len,FICHIER_LISTE_IMAGE_URL,req,"./final1.html"); 
+    printf("\n\n"); 
+
+}
+
+void calculPertinenceForme(char * reqImages, char* reqSIFT)
+{
+	int len; 
+    char **liste = readList(FICHIER_LISTE_CLUSTER_URL, &len); 
+    freeList(liste,len); 
+   
+    printf("TRI :\n"); 
+    KEY distance[len]; 
+    histogrammeDistance(reqSIFT, FICHIER_HISTO_CLUSTER, distance, 256, len,2); 
+    printf("\n\n"); 
+     
+    printf("ETAPE AFFICHAGE :\n"); 
+    AfficherResultatHTMLCLUSTER(distance,len,FICHIER_LISTE_IMAGE_URL,reqImages,"./final2.html"); 
+    printf("\n\n"); 
+
 }

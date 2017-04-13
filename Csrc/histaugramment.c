@@ -11,83 +11,73 @@
 #endif
 
 #include "calculHistogrammes.h"
-#include "affichage.h"
 
-void calculPertinenceCouleur(char * req)
-{
-	int len; 
-    char **liste = readList("../Liste/urls2.txt", &len); 
-    freeList(liste,len); 
-   
-    printf("TRI :\n"); 
-    KEY distance[len]; 
-    histogrammeDistance(req, "../histogrammes/indexes", distance, 64, len); 
-    printf("\n\n"); 
-     
-    printf("ETAPE AFFICHAGE :\n"); 
-    AfficherResultatHTML(distance,len,"../Liste/urls2.txt",req,"../histogrammes/final1.html"); 
-    printf("\n\n"); 
-
-}
+#include "chargementHisto.h"
 
 
-
-/*
-void chargement(char *url) 
-{
-  printf("ETAPE 1 :\n"); 
-  //float monHisto[64]; 
-  //int i =0; 
-  //calculHistogramme("./images/2008_000001.jpg", monHisto); 
-  printf("\n\n"); 
-   
-  //Etape 2 
-  printf("ETAPE 2 :\n"); 
-  calculHistogrammeDeCouleur(url); 
-  printf("\n\n"); 
-
-}
- 
-
-void CalculHistogramesPertinences(char *req, char* path, char* final) 
-{ 
-    int len; 
-    char **liste = readList(path, &len); 
-    freeList(liste,len); 
-   
-    printf("ETAPE 3 :\n"); 
-    KEY distance[len]; 
-    histogrammeDistance(req,path,distance); 
-    printf("\n\n"); 
-   
-    printf("ETAPE TRI :\n"); 
-    TriPertinence(distance, len); 
-    printf("\n\n"); 
-     
-    printf("ETAPE AFFICHAGE :\n"); 
-    AfficherResultatHTML(distance,len,path,req,final); 
-    printf("\n\n"); 
-} 
-
-void filtrageSift(char *fichier) 
-{ 
-    //execlp
-}*/
 
 int main(int argc, char *argv[])
 {
-	if(argc>1)
+	//cat ./mapping/2008_000001.sift | sort -n|uniq -c >testClusterShell.txt 
+	  //float monHisto[256];
+	  //int indice = 0;
+	  //unhistoDeClasse("./mapping/2008_000001.sift", 256, monHisto);
+	  /*int indice =0;
+	  int tailleMAXLu = 5;
+	  char chaine[tailleMAXLu];
+	
+	  for(indice=0; indice <256; indice++)
+	  {
+		 monHisto[indice]=0.0;
+	  }
+	
+	  FILE* f = fopen("./mapping/2008_000001.sift","r");
+	  int t=0;
+	  if(f)
+	  {  
+		while (fgets(chaine, tailleMAXLu, f) != NULL)
+		{
+			indice = atoi(chaine);
+			//printf("%d %s\n",indice,chaine);
+			monHisto[indice]++;
+			t++;
+		}
+		
+		printf("t = %d\n", t);
+		for(indice=0; indice <256; indice++)
+		{
+			monHisto[indice]=monHisto[indice]/t;
+			printf("%f\n",monHisto[indice]);
+		}
+	  }
+	  printf("\n");
+	  fclose(f);
+	*/
+	/*for(indice=0; indice <256; indice++)
+	{
+		printf("%f\n",monHisto[indice]);
+	}*/
+		
+	if(argc==2)
+	{
+		if(atoi(argv[1])==1)
+		{
+			creationFichierHistogrammeCouleur();
+		}
+		else if(atoi(argv[1])==2)
+		{
+			calculHistogrammeDeClasse(256);
+		}
+	}
+	else if(argc>2)
 	{
 		//Etape 1 
 		printf("PREMIERE PARTIE :\n\n");
-
-		//creationFichierHistogrammeCouleur();
-		//calculPertinenceCouleur("../images/2008_000001.jpg");
 		calculPertinenceCouleur(argv[1]);
 		printf("\n\n"); 
 
 		printf("DEUXIEME PARTIE :\n\n"); 
-
+		calculPertinenceForme(argv[1],argv[2]);
 		printf("\n\n"); 
 
 		printf("TROISIEME PARTIE :\n\n");
@@ -95,7 +85,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		printf("Il manque un argument : histo <fichier_Requete>\n");
-		}
+		printf("Il manque un argument. Le programme se lance de deux manière différente :\n histo <fichier_Requete> <fichier_sift>\n histo {1,2}, permet de chrger le fichier des hitogramme de couleur(1) ou de cluster(2)\n");
+	}
 	exit(0);
 }
