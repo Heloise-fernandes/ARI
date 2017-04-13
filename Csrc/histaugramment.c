@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
 		printf("\n\n"); 
 
 		printf("TROISIEME PARTIE :\n\n");
+		calculPertinenceMin(argv[1],argv[2]);
+		calculPertinenceMoy(argv[1],argv[2]);
 		printf("\n\n"); 
 	}
 	else

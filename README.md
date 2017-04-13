@@ -69,4 +69,15 @@ Pour réaliser un descripteur pour une image et la mapper lancer la commande sui
 
 ## Partie  3 : Combiner
 
->TODO
+```
+	histo nom_image_requête nom_sift_image_requete
+```
+	
+### Exemple lancement
+
+```
+./histo ./rouge.jpg ./rouge.sift 
+./histo ./images/2008_000001.jpg ./mapping/2008_000001.sift 
+./histo ./chien-de-montagne-des-pyrenees.jpg ./chien-de-montagne-des-pyrenees.sif 
+
+```

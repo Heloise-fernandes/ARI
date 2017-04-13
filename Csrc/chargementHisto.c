@@ -19,7 +19,7 @@ void calculHistogramme(char* nom, float* histo){
   CIMAGE cim;
   
   //Lecture image à traiter
-  printf("Image %s \n", nom);
+  //printf("Image %s \n", nom);
   read_cimage(nom,&cim);
   
   //On initialise l'histogramme à 0
@@ -131,11 +131,7 @@ void calculHistogrammeDeClasse(int taille)
   {
 	  
 	unhistoDeClasse(liste[indexFichier],taille,monHisto);
-	//for(indice = 0; indice<taille; indice++)
-	//{
-	//	printf("%f - ", monHisto[indice]);
-	//}
-	//printf("\n\n");
+
 	fwrite(monHisto,sizeof(float),taille,efe);
   }
   //on ferme le fichier

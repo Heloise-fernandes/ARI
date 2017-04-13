@@ -39,7 +39,7 @@ void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int 
 	}
 	
 	//charger histogramme requete : 
-	printf("Le fichier reque est %s \n",requete);
+	printf("Le fichier requete est %s \n",requete);
 	if(type == 2){unhistoDeClasse(requete,256, histoReq);}
 	else{calculHistogramme(requete, histoReq);}
 	
@@ -47,13 +47,13 @@ void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int 
 	//Calcule distance pour tout les fichiers
 	FILE* efe = fopen(ficherHistogrammes,"rb");	
     
-    printf("%f",histoReq[0]);
+    /*printf("%f",histoReq[0]);
     for(i=1;i<size;i++)
 	{
 		printf("- %f",histoReq[i]);
 	}
 	printf("\n");
-	
+	*/
 	//Affichage
     float distanceCourante;
     int j=0;
@@ -70,12 +70,10 @@ void histogrammeDistance(char* requete, char *ficherHistogrammes, KEY *res, int 
 	}
 	fclose(efe);
 	
-	TriPertinence(res,len);
-	
-	for(i=0;i<20;i++)
+	/*for(i=0;i<20;i++)
 	{
 		printf("%d / %f\n",res[i].k,res[i].d);
-	}
+	}*/
 }
 
 /*--------------------------------------------------------------------*/
@@ -91,8 +89,10 @@ void calculPertinenceCouleur(char * req)
     KEY distance[len]; 
     histogrammeDistance(req, FICHIER_HISTO_COULEUR, distance, 64, len,1); 
     printf("\n\n"); 
-     
-    printf("ETAPE AFFICHAGE :%s, %d , %s\n",req,len,FICHIER_LISTE_IMAGE_URL); 
+    
+    TriPertinence(distance,len);
+    
+    printf("ETAPE AFFICHAGE :%s\n",req); 
     AfficherResultatHTMLCOULEUR(distance,len,FICHIER_LISTE_IMAGE_URL,req,"./final1.html"); 
     printf("\n\n"); 
 
@@ -108,9 +108,71 @@ void calculPertinenceForme(char * reqImages, char* reqSIFT)
     KEY distance[len]; 
     histogrammeDistance(reqSIFT, FICHIER_HISTO_CLUSTER, distance, 256, len,2); 
     printf("\n\n"); 
+    
+    TriPertinence(distance,len); 
      
     printf("ETAPE AFFICHAGE :\n"); 
     AfficherResultatHTMLCLUSTER(distance,len,FICHIER_LISTE_IMAGE_URL,reqImages,"./final2.html"); 
     printf("\n\n"); 
 
+}
+
+void calculPertinenceMoy(char * reqImages, char* reqSIFT)
+{
+	int len; 
+    char **liste = readList(FICHIER_LISTE_CLUSTER_URL, &len); 
+    freeList(liste,len); 
+   
+    printf("TRI :\n"); 
+    KEY distanceColor[len]; 
+    KEY distanceCluster[len]; 
+    KEY distance[len]; 
+    histogrammeDistance(reqImages, FICHIER_HISTO_COULEUR, distanceColor, 64, len,1); 
+    histogrammeDistance(reqSIFT, FICHIER_HISTO_CLUSTER, distanceCluster, 256, len,2); 
+    printf("\n\n"); 
+    
+    int i =0;
+    for(i=0; i < len; i++)
+    {
+		distance[i].k = distanceColor[i].k;
+		distance[i].d = (distanceColor[i].d+distanceCluster[i].d)/2;
+	}
+    TriPertinence(distance,len); 
+    
+    printf("ETAPE AFFICHAGE :\n"); 
+    AfficherResultatHTMLCLUSTER(distance,len,FICHIER_LISTE_IMAGE_URL,reqImages,"./final3.html"); 
+    printf("\n\n"); 
+}
+
+float min(float a, float b)
+{
+	if(a<b){return a;}
+	return b;
+}
+
+void calculPertinenceMin(char * reqImages, char* reqSIFT)
+{
+	int len; 
+    char **liste = readList(FICHIER_LISTE_CLUSTER_URL, &len); 
+    freeList(liste,len); 
+   
+    printf("TRI :\n"); 
+    KEY distanceColor[len]; 
+    KEY distanceCluster[len]; 
+    KEY distance[len]; 
+    histogrammeDistance(reqImages, FICHIER_HISTO_COULEUR, distanceColor, 64, len,1); 
+    histogrammeDistance(reqSIFT, FICHIER_HISTO_CLUSTER, distanceCluster, 256, len,2); 
+    printf("\n\n"); 
+    
+    int i =0;
+    for(i=0; i < len; i++)
+    {
+		distance[i].k = distanceColor[i].k;
+		distance[i].d = min(distanceColor[i].d,distanceCluster[i].d);
+	}
+    TriPertinence(distance,len); 
+    
+    printf("ETAPE AFFICHAGE :\n"); 
+    AfficherResultatHTMLCLUSTER(distance,len,FICHIER_LISTE_IMAGE_URL,reqImages,"./final4.html"); 
+    printf("\n\n"); 
 }
