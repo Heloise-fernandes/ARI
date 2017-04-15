@@ -19,7 +19,6 @@ void calculHistogramme(char* nom, float* histo){
   CIMAGE cim;
   
   //Lecture image à traiter
-  //printf("Image %s \n", nom);
   read_cimage(nom,&cim);
   
   //On initialise l'histogramme à 0
@@ -48,10 +47,8 @@ void calculHistogramme(char* nom, float* histo){
   for(i=0;i<64;i++){
 	  float f = histo[i]/t;
 	  histo[i] = f;
-	  //printf("%f - ",histo[i]);
 	  
   }
-  //printf("\n");
   free_cimage(nom,&cim);
   
   return;
@@ -89,7 +86,6 @@ void creationFichierHistogrammeCouleur()
 /*--------------------------------------------------------------------*/
 void unhistoDeClasse(char *file, int taille, float* monHisto)
 {
-	//printf("%s\n",file);
 	int indice =0;
 	int tailleMAXLu = 5;
 	char chaine[tailleMAXLu];
